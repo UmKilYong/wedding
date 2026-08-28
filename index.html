@@ -58,24 +58,26 @@
   }
   .sub{text-align:center;font-size:13.5px;color:#9C918C;margin:0 0 30px;}
 
-  /* ── table ── */
-  table{width:100%;border-collapse:collapse;background:var(--paper);border-radius:6px;overflow:hidden;}
-  thead th{
+  /* ── board (데스크톱: 표 모양 grid) ── */
+  .board{background:var(--paper);border-radius:6px;overflow:hidden;}
+  .bhead,.row{display:grid;grid-template-columns:132px 1fr 1fr 1fr;}
+  .bhead>div{
     background:var(--rose);color:#fff;font-size:13.5px;font-weight:700;
-    padding:14px 18px;text-align:left;letter-spacing:.01em;
+    padding:14px 18px;letter-spacing:.01em;
   }
-  thead th:first-child{text-align:center;width:132px;}
-  tbody td{
-    border-bottom:1px solid var(--line);
-    padding:16px 18px;vertical-align:top;
-  }
-  tbody tr:last-child td{border-bottom:none;}
-  td.day{
+  .bhead>div:first-child{text-align:center;}
+  .row{border-bottom:1px solid var(--line);}
+  .row:last-child{border-bottom:none;}
+  .day{
     text-align:center;background:#FEFCFA;border-right:1px solid var(--line);
-    padding-top:20px;
+    padding:20px 10px 16px;
   }
-  .day-label{font-size:20px;font-weight:800;color:var(--rose-text);letter-spacing:-.01em;}
-  .day-sub{font-size:11.5px;color:#A79C97;margin-top:5px;}
+  .day-label{font-size:20px;font-weight:800;color:var(--rose-text);letter-spacing:-.01em;outline:none;border-radius:3px;}
+  .day-sub{font-size:11.5px;color:#A79C97;margin-top:5px;outline:none;border-radius:3px;}
+  .day-label:focus,.day-sub:focus{background:#FDF3EF;box-shadow:0 0 0 2px #FDF3EF;}
+  .day-progress{font-size:11px;font-weight:700;color:var(--rose-text);margin-top:7px;}
+  .cell{padding:16px 18px;min-width:0;}
+  .cellhead{display:none;}
 
   /* ── items ── */
   ul.items{list-style:none;margin:0;padding:0;}
@@ -85,13 +87,13 @@
   }
   li.item input[type=checkbox]{
     appearance:none;-webkit-appearance:none;
-    width:14px;height:14px;margin:3px 0 0;flex:none;
-    border:1.5px solid #E3CEC9;border-radius:3px;background:#fff;cursor:pointer;
+    width:16px;height:16px;margin:2px 0 0;flex:none;
+    border:1.5px solid #E3CEC9;border-radius:4px;background:#fff;cursor:pointer;
   }
   li.item input[type=checkbox]:hover{border-color:var(--rose-deep);}
   li.item input[type=checkbox]:checked{background:var(--rose);border-color:var(--rose);}
   li.item input[type=checkbox]:checked::after{
-    content:"";display:block;width:3.5px;height:7px;margin:1px 0 0 4px;
+    content:"";display:block;width:4px;height:8px;margin:1px 0 0 4.5px;
     border:solid #fff;border-width:0 1.8px 1.8px 0;transform:rotate(43deg);
   }
   li.item input[type=checkbox]:focus-visible{outline:2px solid var(--rose-deep);outline-offset:2px;}
@@ -101,7 +103,7 @@
   }
   li.item.key .txt{font-weight:700;color:#453E3B;}
   .txt:focus{background:#FDF3EF;box-shadow:0 0 0 2px #FDF3EF;}
-  input[type=checkbox]:checked ~ .txt{color:#BDB3AE;text-decoration:line-through;text-decoration-color:#E3D6D1;}
+  li.item.done .txt{color:#BDB3AE;text-decoration:line-through;text-decoration-color:#E3D6D1;}
 
   .badge{
     flex:none;margin-top:1px;font-size:10.5px;font-weight:700;color:#fff;
@@ -137,12 +139,12 @@
     font-family:inherit;font-size:11.5px;color:#CDC0BA;background:none;border:none;
     padding:5px 0 0;cursor:pointer;opacity:0;transition:.12s;
   }
-  td:hover .add-item,td:focus-within .add-item{opacity:1;}
+  .cell:hover .add-item,.cell:focus-within .add-item{opacity:1;}
   .add-item:hover{color:var(--rose-deep);}
   .row-tools{
     margin-top:8px;opacity:0;transition:.12s;
   }
-  tr:hover .row-tools{opacity:1;}
+  .row:hover .row-tools{opacity:1;}
   .row-tools button{
     font-family:inherit;font-size:11px;color:#C6B8B2;background:none;border:none;
     cursor:pointer;padding:2px 5px;border-radius:3px;
@@ -151,19 +153,55 @@
 
   .foot{text-align:center;font-size:12.5px;color:#A79C97;margin-top:26px;}
 
+  /* ── 모바일: 날짜별 카드 스택 ── */
   @media (max-width:760px){
-    body{padding:20px 8px 40px;}
-    thead th,tbody td{padding:12px 10px;font-size:12.5px;}
-    thead th:first-child{width:88px;}
-    .day-label{font-size:16px;}
-    .txt{font-size:12.5px;}
+    body{padding:20px 10px 40px;}
     h1{font-size:24px;}
+    .bhead{display:none;}
+    .board{background:none;border-radius:0;overflow:visible;}
+    .row{
+      display:block;background:var(--paper);border:1px solid var(--line);
+      border-radius:12px;margin-bottom:14px;box-shadow:0 1px 4px rgba(0,0,0,.04);
+    }
+    .row:last-child{border-bottom:1px solid var(--line);}
+    .day{
+      display:flex;align-items:baseline;gap:10px;text-align:left;
+      border-right:none;border-bottom:1px solid var(--line);
+      padding:13px 16px;border-radius:12px 12px 0 0;
+    }
+    .day-label{font-size:18px;}
+    .day-sub{margin-top:0;font-size:12px;}
+    .day-progress{margin:0 0 0 auto;font-size:12px;}
+    .cell{padding:12px 16px 10px;}
+    .cell.empty{display:none;}
+    .cellhead{
+      display:block;font-size:11.5px;font-weight:800;color:var(--tan);
+      margin:0 0 4px;letter-spacing:.04em;
+    }
+    li.item{min-height:44px;align-items:flex-start;gap:11px;padding:7px 0;}
+    li.item input[type=checkbox]{width:22px;height:22px;margin-top:1px;border-radius:6px;border-width:2px;}
+    li.item input[type=checkbox]:checked::after{
+      width:5.5px;height:11px;margin:2.5px 0 0 6.5px;border-width:0 2.2px 2.2px 0;
+    }
+    .txt{font-size:15px;line-height:1.6;padding-top:2px;}
+    .tip{font-size:13px;}
+    .tools{opacity:1;position:static;margin-left:auto;padding-left:8px;background:none;align-self:center;}
+    .add-item{opacity:1;padding:2px 0 4px;}
+    .row-tools{opacity:1;margin:0 0 0 8px;}
+    .dash{display:none;}
   }
+
+  /* ── 인쇄 ── */
   @media print{
     body{background:#fff;padding:0;}
     .toolbar,.status,.tools,.add-item,.row-tools{display:none !important;}
-    table{border:1px solid var(--line);}
-    tr{break-inside:avoid;}
+    .board{border:1px solid var(--line);border-radius:0;}
+    .bhead{display:grid;}
+    .row{display:grid;grid-template-columns:132px 1fr 1fr 1fr;break-inside:avoid;
+      border:none;border-bottom:1px solid var(--line);border-radius:0;box-shadow:none;margin:0;}
+    .day{display:block;text-align:center;border-right:1px solid var(--line);border-bottom:none;}
+    .cell.empty{display:block;}
+    .cellhead{display:none;}
   }
   @media (prefers-reduced-motion:reduce){*{transition:none !important;}}
 </style>
@@ -181,553 +219,229 @@
   <p class="status" id="status" aria-live="polite"></p>
 
   <div class="mark">♡</div>
-  <h1 contenteditable="true">웨딩 준비 타임라인</h1>
-  <p class="sub" contenteditable="true">상견례부터 예식 후까지, 놓치지 않도록</p>
+  <h1 id="title" contenteditable="true">웨딩 준비 타임라인</h1>
+  <p class="sub" id="sub" contenteditable="true">상견례부터 예식 후까지, 놓치지 않도록</p>
 
-  <table>
-    <thead>
-      <tr>
-        <th contenteditable="true">DAY</th>
-        <th contenteditable="true">결혼식·신혼여행</th>
-        <th contenteditable="true">웨딩패키지·한복·예복</th>
-        <th contenteditable="true">혼수·신혼집·기타</th>
-      </tr>
-    </thead>
-    <tbody id="body">
+  <div class="board" id="board"></div>
 
-      <!-- D-365 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-365</div>
-          <div class="day-sub" contenteditable="true">약 12개월 전</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item key"><input type="checkbox"><span class="txt" contenteditable="true">결혼 날짜 대략 정하기</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">예식 스타일 정하기(호텔·컨벤션·하우스·스몰)</span><span class="badge">핵심</span></li>
-          </ul>
-          <div class="tip"><span class="tip-label">TIP</span><span class="tip-txt" contenteditable="true">날짜가 정해져야 웨딩홀·스드메 일정이 전부 움직여요</span></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">웨딩홀 투어 시작</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">예산 큰 틀 잡기</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-      </tr>
-
-      <!-- D-300 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-300</div>
-          <div class="day-sub" contenteditable="true">약 10개월 전</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">신혼집 방향 논의(매매·전세·월세)</span><span class="badge">핵심</span></li>
-          </ul>
-          <div class="tip"><span class="tip-label">TIP</span><span class="tip-txt" contenteditable="true">스드메 계약 시 원본 제공 여부·추가 비용을 꼭 확인하세요</span></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item key"><input type="checkbox"><span class="txt" contenteditable="true">웨딩홀 계약</span><span class="badge">핵심</span></li>
-            <li class="item key"><input type="checkbox"><span class="txt" contenteditable="true">스드메 상담 및 계약</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">본식촬영 진행 여부 결정</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">결혼 예산 세부화</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-      </tr>
-
-      <!-- D-240 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-240</div>
-          <div class="day-sub" contenteditable="true">약 8개월 전</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">예단·혼수 등 상의</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item key"><input type="checkbox"><span class="txt" contenteditable="true">드레스투어 후 샵결정</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">예복 준비 시작</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">신혼집 계약 또는 인테리어 계획</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-      </tr>
-
-      <!-- D-150 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-150</div>
-          <div class="day-sub" contenteditable="true">약 5개월 전</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">예물·예단·반지 준비</span><span class="badge">핵심</span></li>
-          </ul>
-          <div class="tip"><span class="tip-label">TIP</span><span class="tip-txt" contenteditable="true">한복 제작은 평균 4~5주 걸려요. 촬영·본식 일정 역산 필수!</span></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">혼주예복 준비</span><span class="badge">핵심</span></li>
-            <li class="item key"><input type="checkbox"><span class="txt" contenteditable="true">한복 맞춤·대여 결정</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">본식 헤어·메이크업 상담</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">스킨·바디케어</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-      </tr>
-
-      <!-- D-100 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-100</div>
-          <div class="day-sub" contenteditable="true">약 3개월 전</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">하객수 점검</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">웨딩연주·축가 확인</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item key"><input type="checkbox"><span class="txt" contenteditable="true">웨딩촬영</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">한복·예복·예물 픽업</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">혼수가전 준비</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-      </tr>
-
-      <!-- D-60 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-60</div>
-          <div class="day-sub" contenteditable="true">약 2개월 전</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">주례·사회·축가 섭외</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">하객 리스트 1차 정리</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">사진 셀렉 및 액자주문</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">양가 어머님 한복맞춤</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">양가 아버님 예복맞춤</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">청첩장 디자인 선택</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">신혼집 인테리어</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-      </tr>
-
-      <!-- D-45 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-45</div>
-          <div class="day-sub" contenteditable="true">약 1.5개월 전</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">식순 구성 논의</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item key"><input type="checkbox"><span class="txt" contenteditable="true">한복 피팅 및 최종 확정</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">본식 영상 제작 여부 결정</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item key"><input type="checkbox"><span class="txt" contenteditable="true">청첩장 발송</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-      </tr>
-
-      <!-- D-30 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-30</div>
-          <div class="day-sub" contenteditable="true">약 1개월 전</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">양가접수대·가방친구 섭외</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">웨딩홀 시식</span><span class="badge">핵심</span></li>
-            <li class="item key"><input type="checkbox"><span class="txt" contenteditable="true">성혼선언문·혼인서약서 준비</span><span class="badge">핵심</span></li>
-          </ul>
-          <div class="tip"><span class="tip-label">TIP</span><span class="tip-txt" contenteditable="true">성혼선언문·혼인서약서는 미리 초안 잡아두면 훨씬 수월해요</span></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item key"><input type="checkbox"><span class="txt" contenteditable="true">본식드레스 셀렉</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">혼주메이크업 최종체크</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">식전영상 완성</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">본식 BGM 확정</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">모바일청첩장</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">답례품 수량 체크 및 구매</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-      </tr>
-
-      <!-- D-14 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-14</div>
-          <div class="day-sub" contenteditable="true">1~2주 전</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">예식 리허설 일정 확인</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">혼주·신랑신부 동선 공유</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">웨딩카·주차 안내 체크</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">부케선택</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">하객 최종 인원 전달</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">가벼운 수분관리</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-      </tr>
-
-      <!-- D-7 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-7</div>
-          <div class="day-sub" contenteditable="true">1주 전</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">허니문 짐꾸리기·환전</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">식순 최종 점검</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">BGM 최종 점검</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items"></ul>
-          <span class="dash">—</span>
-        </td>
-        <td>
-          <ul class="items"></ul>
-          <span class="dash">—</span>
-        </td>
-      </tr>
-
-      <!-- D-1 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-1</div>
-          <div class="day-sub" contenteditable="true">전날</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">주례·사회·접수대 점검</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">축가 점검</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">예복·한복 픽업</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">DP액자·포토테이블 준비</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">사례비 준비</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items"></ul>
-          <span class="dash">—</span>
-        </td>
-      </tr>
-
-      <!-- D-DAY -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">D-DAY</div>
-          <div class="day-sub" contenteditable="true">당일</div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item key"><input type="checkbox"><span class="txt" contenteditable="true">식 1시간 반 전 도착</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">혼인서약서 출력본·반지 챙기기</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">예복·한복·액자 챙기기</span><span class="badge">핵심</span></li>
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">부모님 전달 물품 확인</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">축의금 담당자 확인</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-      </tr>
-
-      <!-- 예식후 -->
-      <tr>
-        <td class="day">
-          <div class="day-label" contenteditable="true">예식후</div>
-          <div class="day-sub" contenteditable="true"></div>
-          <div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">주례·사회 감사인사</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-        <td>
-          <ul class="items"></ul>
-          <span class="dash">—</span>
-        </td>
-        <td>
-          <ul class="items">
-            <li class="item"><input type="checkbox"><span class="txt" contenteditable="true">답례장 발송</span><span class="badge">핵심</span></li>
-          </ul>
-        </td>
-      </tr>
-
-    </tbody>
-  </table>
-
-  <p class="foot" contenteditable="true">준비의 순간마다, 하나씩 체크하며 ♡</p>
+  <p class="foot" id="foot" contenteditable="true">준비의 순간마다, 하나씩 체크하며 ♡</p>
 </div>
 
-<script>
-(function(){
-  var body = document.getElementById('body');
-
-  /* ── 저장소 (브라우저 localStorage) ─────────────────── */
-  var KEY = 'wedding-timeline-v1';
-  var statusEl = document.getElementById('status');
-  var store = (function(){
-    try{ localStorage.setItem('__t','1'); localStorage.removeItem('__t'); return localStorage; }
-    catch(e){ return null; }
-  })();
-
-  function setStatus(msg, warn){
-    statusEl.textContent = msg;
-    statusEl.className = warn ? 'status warn' : 'status';
-  }
-  function stamp(){
-    var d = new Date();
-    return ('0'+d.getHours()).slice(-2)+':'+('0'+d.getMinutes()).slice(-2);
-  }
-  function syncChecked(){
-    document.querySelectorAll('input[type=checkbox]').forEach(function(c){
-      if(c.checked) c.setAttribute('checked',''); else c.removeAttribute('checked');
-    });
-  }
-  function save(){
-    if(!store){ return; }
-    syncChecked();
-    try{
-      store.setItem(KEY, JSON.stringify({
-        v: 1,
-        body: body.innerHTML,
-        title: document.querySelector('h1').innerHTML,
-        sub: document.querySelector('.sub').innerHTML,
-        foot: document.querySelector('.foot').innerHTML
-      }));
-      setStatus('저장됨 · ' + stamp());
-    }catch(e){
-      setStatus('저장 공간이 부족해 기록하지 못했습니다.', true);
+<script type="application/json" id="seed">
+{
+  "meta": {
+    "title": "웨딩 준비 타임라인",
+    "sub": "상견례부터 예식 후까지, 놓치지 않도록",
+    "foot": "준비의 순간마다, 하나씩 체크하며 ♡"
+  },
+  "columns": ["DAY", "결혼식·신혼여행", "웨딩패키지·한복·예복", "혼수·신혼집·기타"],
+  "rows": [
+    {
+      "id": "r1", "label": "D-365", "sub": "약 12개월 전",
+      "cells": [
+        { "items": [
+            { "id": "r1c1i1", "text": "결혼 날짜 대략 정하기", "key": true, "checked": false },
+            { "id": "r1c1i2", "text": "예식 스타일 정하기(호텔·컨벤션·하우스·스몰)", "key": false, "checked": false }
+          ], "tip": "날짜가 정해져야 웨딩홀·스드메 일정이 전부 움직여요" },
+        { "items": [
+            { "id": "r1c2i1", "text": "웨딩홀 투어 시작", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r1c3i1", "text": "예산 큰 틀 잡기", "key": false, "checked": false }
+          ], "tip": "" }
+      ]
+    },
+    {
+      "id": "r2", "label": "D-300", "sub": "약 10개월 전",
+      "cells": [
+        { "items": [
+            { "id": "r2c1i1", "text": "신혼집 방향 논의(매매·전세·월세)", "key": false, "checked": false }
+          ], "tip": "스드메 계약 시 원본 제공 여부·추가 비용을 꼭 확인하세요" },
+        { "items": [
+            { "id": "r2c2i1", "text": "웨딩홀 계약", "key": true, "checked": false },
+            { "id": "r2c2i2", "text": "스드메 상담 및 계약", "key": true, "checked": false },
+            { "id": "r2c2i3", "text": "본식촬영 진행 여부 결정", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r2c3i1", "text": "결혼 예산 세부화", "key": false, "checked": false }
+          ], "tip": "" }
+      ]
+    },
+    {
+      "id": "r3", "label": "D-240", "sub": "약 8개월 전",
+      "cells": [
+        { "items": [
+            { "id": "r3c1i1", "text": "예단·혼수 등 상의", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r3c2i1", "text": "드레스투어 후 샵결정", "key": true, "checked": false },
+            { "id": "r3c2i2", "text": "예복 준비 시작", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r3c3i1", "text": "신혼집 계약 또는 인테리어 계획", "key": false, "checked": false }
+          ], "tip": "" }
+      ]
+    },
+    {
+      "id": "r4", "label": "D-150", "sub": "약 5개월 전",
+      "cells": [
+        { "items": [
+            { "id": "r4c1i1", "text": "예물·예단·반지 준비", "key": false, "checked": false }
+          ], "tip": "한복 제작은 평균 4~5주 걸려요. 촬영·본식 일정 역산 필수!" },
+        { "items": [
+            { "id": "r4c2i1", "text": "혼주예복 준비", "key": false, "checked": false },
+            { "id": "r4c2i2", "text": "한복 맞춤·대여 결정", "key": true, "checked": false },
+            { "id": "r4c2i3", "text": "본식 헤어·메이크업 상담", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r4c3i1", "text": "스킨·바디케어", "key": false, "checked": false }
+          ], "tip": "" }
+      ]
+    },
+    {
+      "id": "r5", "label": "D-100", "sub": "약 3개월 전",
+      "cells": [
+        { "items": [
+            { "id": "r5c1i1", "text": "하객수 점검", "key": false, "checked": false },
+            { "id": "r5c1i2", "text": "웨딩연주·축가 확인", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r5c2i1", "text": "웨딩촬영", "key": true, "checked": false },
+            { "id": "r5c2i2", "text": "한복·예복·예물 픽업", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r5c3i1", "text": "혼수가전 준비", "key": false, "checked": false }
+          ], "tip": "" }
+      ]
+    },
+    {
+      "id": "r6", "label": "D-60", "sub": "약 2개월 전",
+      "cells": [
+        { "items": [
+            { "id": "r6c1i1", "text": "주례·사회·축가 섭외", "key": false, "checked": false },
+            { "id": "r6c1i2", "text": "하객 리스트 1차 정리", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r6c2i1", "text": "사진 셀렉 및 액자주문", "key": false, "checked": false },
+            { "id": "r6c2i2", "text": "양가 어머님 한복맞춤", "key": false, "checked": false },
+            { "id": "r6c2i3", "text": "양가 아버님 예복맞춤", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r6c3i1", "text": "청첩장 디자인 선택", "key": false, "checked": false },
+            { "id": "r6c3i2", "text": "신혼집 인테리어", "key": false, "checked": false }
+          ], "tip": "" }
+      ]
+    },
+    {
+      "id": "r7", "label": "D-45", "sub": "약 1.5개월 전",
+      "cells": [
+        { "items": [
+            { "id": "r7c1i1", "text": "식순 구성 논의", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r7c2i1", "text": "한복 피팅 및 최종 확정", "key": true, "checked": false },
+            { "id": "r7c2i2", "text": "본식 영상 제작 여부 결정", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r7c3i1", "text": "청첩장 발송", "key": true, "checked": false }
+          ], "tip": "" }
+      ]
+    },
+    {
+      "id": "r8", "label": "D-30", "sub": "약 1개월 전",
+      "cells": [
+        { "items": [
+            { "id": "r8c1i1", "text": "양가접수대·가방친구 섭외", "key": false, "checked": false },
+            { "id": "r8c1i2", "text": "웨딩홀 시식", "key": false, "checked": false },
+            { "id": "r8c1i3", "text": "성혼선언문·혼인서약서 준비", "key": true, "checked": false }
+          ], "tip": "성혼선언문·혼인서약서는 미리 초안 잡아두면 훨씬 수월해요" },
+        { "items": [
+            { "id": "r8c2i1", "text": "본식드레스 셀렉", "key": true, "checked": false },
+            { "id": "r8c2i2", "text": "혼주메이크업 최종체크", "key": false, "checked": false },
+            { "id": "r8c2i3", "text": "식전영상 완성", "key": false, "checked": false },
+            { "id": "r8c2i4", "text": "본식 BGM 확정", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r8c3i1", "text": "모바일청첩장", "key": false, "checked": false },
+            { "id": "r8c3i2", "text": "답례품 수량 체크 및 구매", "key": false, "checked": false }
+          ], "tip": "" }
+      ]
+    },
+    {
+      "id": "r9", "label": "D-14", "sub": "1~2주 전",
+      "cells": [
+        { "items": [
+            { "id": "r9c1i1", "text": "예식 리허설 일정 확인", "key": false, "checked": false },
+            { "id": "r9c1i2", "text": "혼주·신랑신부 동선 공유", "key": false, "checked": false },
+            { "id": "r9c1i3", "text": "웨딩카·주차 안내 체크", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r9c2i1", "text": "부케선택", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r9c3i1", "text": "하객 최종 인원 전달", "key": false, "checked": false },
+            { "id": "r9c3i2", "text": "가벼운 수분관리", "key": false, "checked": false }
+          ], "tip": "" }
+      ]
+    },
+    {
+      "id": "r10", "label": "D-7", "sub": "1주 전",
+      "cells": [
+        { "items": [
+            { "id": "r10c1i1", "text": "허니문 짐꾸리기·환전", "key": false, "checked": false },
+            { "id": "r10c1i2", "text": "식순 최종 점검", "key": false, "checked": false },
+            { "id": "r10c1i3", "text": "BGM 최종 점검", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [], "tip": "" },
+        { "items": [], "tip": "" }
+      ]
+    },
+    {
+      "id": "r11", "label": "D-1", "sub": "전날",
+      "cells": [
+        { "items": [
+            { "id": "r11c1i1", "text": "주례·사회·접수대 점검", "key": false, "checked": false },
+            { "id": "r11c1i2", "text": "축가 점검", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r11c2i1", "text": "예복·한복 픽업", "key": false, "checked": false },
+            { "id": "r11c2i2", "text": "DP액자·포토테이블 준비", "key": false, "checked": false },
+            { "id": "r11c2i3", "text": "사례비 준비", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [], "tip": "" }
+      ]
+    },
+    {
+      "id": "r12", "label": "D-DAY", "sub": "당일",
+      "cells": [
+        { "items": [
+            { "id": "r12c1i1", "text": "식 1시간 반 전 도착", "key": true, "checked": false },
+            { "id": "r12c1i2", "text": "혼인서약서 출력본·반지 챙기기", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r12c2i1", "text": "예복·한복·액자 챙기기", "key": false, "checked": false },
+            { "id": "r12c2i2", "text": "부모님 전달 물품 확인", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [
+            { "id": "r12c3i1", "text": "축의금 담당자 확인", "key": false, "checked": false }
+          ], "tip": "" }
+      ]
+    },
+    {
+      "id": "r13", "label": "예식후", "sub": "",
+      "cells": [
+        { "items": [
+            { "id": "r13c1i1", "text": "주례·사회 감사인사", "key": false, "checked": false }
+          ], "tip": "" },
+        { "items": [], "tip": "" },
+        { "items": [
+            { "id": "r13c3i1", "text": "답례장 발송", "key": false, "checked": false }
+          ], "tip": "" }
+      ]
     }
-  }
-  var timer;
-  function saveSoon(){ clearTimeout(timer); timer = setTimeout(save, 400); }
-
-  function restore(){
-    if(!store){
-      setStatus('이 브라우저에서는 저장이 지원되지 않습니다. 시크릿 모드를 끄고 다시 열어보세요.', true);
-      return;
-    }
-    var raw = store.getItem(KEY);
-    if(!raw){ setStatus('체크와 수정 내용은 이 브라우저에 자동 저장됩니다.'); return; }
-    try{
-      var d = JSON.parse(raw);
-      if(d && d.v === 1 && d.body){
-        body.innerHTML = d.body;
-        if(d.title) document.querySelector('h1').innerHTML = d.title;
-        if(d.sub) document.querySelector('.sub').innerHTML = d.sub;
-        if(d.foot) document.querySelector('.foot').innerHTML = d.foot;
-        setStatus('이전에 저장한 내용을 불러왔습니다.');
-      }
-    }catch(e){
-      store.removeItem(KEY);
-      setStatus('저장된 내용을 읽지 못해 원본으로 시작합니다.', true);
-    }
-  }
-  restore();
-
-  // 항목 추가 버튼 / 항목 도구 삽입
-  function decorate(){
-    document.querySelectorAll('#body td:not(.day)').forEach(function(td){
-      if(!td.querySelector('.add-item')){
-        var b = document.createElement('button');
-        b.type='button'; b.className='add-item'; b.dataset.act='additem';
-        b.textContent='＋ 항목 추가';
-        td.appendChild(b);
-      }
-    });
-    document.querySelectorAll('li.item').forEach(function(li){
-      if(!li.querySelector('.tools')){
-        var d = document.createElement('span');
-        d.className='tools';
-        d.innerHTML='<button type="button" data-act="togglekey" title="핵심 표시">핵심</button>'+
-                    '<button type="button" data-act="delitem" title="항목 삭제">삭제</button>';
-        li.appendChild(d);
-      }
-    });
-  }
-  decorate();
-
-  function newItem(){
-    var li = document.createElement('li');
-    li.className='item';
-    li.innerHTML='<input type="checkbox"><span class="txt" contenteditable="true"></span><span class="badge">핵심</span>';
-    return li;
-  }
-
-  document.addEventListener('click', function(e){
-    var btn = e.target.closest('button');
-    if(!btn) return;
-    var act = btn.dataset.act;
-
-    if(act==='additem'){
-      var td = btn.closest('td');
-      var ul = td.querySelector('ul.items');
-      var dash = td.querySelector('.dash');
-      if(dash) dash.remove();
-      var li = newItem();
-      ul.appendChild(li);
-      decorate();
-      li.querySelector('.txt').focus();
-      saveSoon();
-    }
-    if(act==='delitem'){ btn.closest('li.item').remove(); saveSoon(); }
-    if(act==='togglekey'){ btn.closest('li.item').classList.toggle('key'); saveSoon(); }
-    if(act==='delrow'){ btn.closest('tr').remove(); saveSoon(); }
-
-    if(act==='clear'){
-      if(confirm('저장된 체크와 수정 내용을 모두 지우고 원본 표로 되돌립니다. 계속할까요?')){
-        if(store) store.removeItem(KEY);
-        location.reload();
-      }
-    }
-
-    if(act==='addrow'){
-      var tr = document.createElement('tr');
-      tr.innerHTML =
-        '<td class="day"><div class="day-label" contenteditable="true">D-</div>'+
-        '<div class="day-sub" contenteditable="true"></div>'+
-        '<div class="row-tools"><button type="button" data-act="delrow">행 삭제</button></div></td>'+
-        '<td><ul class="items"></ul></td><td><ul class="items"></ul></td><td><ul class="items"></ul></td>';
-      body.appendChild(tr);
-      tr.querySelectorAll('ul.items').forEach(function(ul){ ul.appendChild(newItem()); });
-      decorate();
-      tr.querySelector('.day-label').focus();
-      saveSoon();
-    }
-
-    if(act==='reset'){
-      document.querySelectorAll('#body input[type=checkbox]').forEach(function(c){ c.checked=false; });
-      save();
-    }
-
-    if(act==='print'){ window.print(); }
-
-    if(act==='save'){
-      syncChecked();
-      var html = '<!DOCTYPE html>\n' + document.documentElement.outerHTML;
-      var blob = new Blob([html], {type:'text/html;charset=utf-8'});
-      var a = document.createElement('a');
-      a.href = URL.createObjectURL(blob);
-      a.download = '웨딩-준비-타임라인.html';
-      a.click();
-      URL.revokeObjectURL(a.href);
-    }
-  });
-
-  // 편집 중 줄바꿈은 서식 없이
-  document.addEventListener('keydown', function(e){
-    if(e.key==='Enter' && e.target.isContentEditable && e.target.classList.contains('txt')){
-      e.preventDefault();
-      var li = e.target.closest('li.item');
-      var n = newItem();
-      li.after(n);
-      decorate();
-      n.querySelector('.txt').focus();
-      saveSoon();
-    }
-  });
-
-  // 자동 저장: 체크 변경 / 텍스트 수정
-  document.addEventListener('change', function(e){
-    if(e.target.type === 'checkbox') save();
-  });
-  document.addEventListener('input', function(e){
-    if(e.target.isContentEditable) saveSoon();
-  });
-  window.addEventListener('beforeunload', function(){ clearTimeout(timer); save(); });
-
-  // 붙여넣기는 순수 텍스트로
-  document.addEventListener('paste', function(e){
-    if(!e.target.isContentEditable) return;
-    e.preventDefault();
-    var t = (e.clipboardData||window.clipboardData).getData('text/plain');
-    document.execCommand('insertText', false, t);
-  });
-})();
+  ]
+}
 </script>
+<script src="app.js" defer></script>
 </body>
 </html>
