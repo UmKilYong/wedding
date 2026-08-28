@@ -281,6 +281,8 @@ if (typeof document !== 'undefined') (function () {
     api('GET').then(function (r) {
       if (r.doc && r.rev > state.rev) {
         state.rev = r.rev; state.doc = r.doc;
+        // GET 응답 대기 중에 생긴 로컬 변경(pending)을 새 doc 위에 재적용
+        if (state.pending.length) { reapply(state.doc, state.pending); saveSoon(); }
         renderSoonOrNow();
         updateCache();
         setStatus('동기화됨 · ' + stamp());
@@ -319,6 +321,8 @@ if (typeof document !== 'undefined') (function () {
       updateCache();
     });
     setInterval(poll, 5000);
+    document.addEventListener('visibilitychange', function () { if (!document.hidden) poll(); });
+    window.addEventListener('focus', poll);
   }
 
   /* ── 이벤트 ── */

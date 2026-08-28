@@ -185,7 +185,8 @@
     }
     .txt{font-size:15px;line-height:1.6;padding-top:2px;}
     .tip{font-size:13px;}
-    .tools{opacity:1;position:static;margin-left:auto;padding-left:8px;background:none;align-self:center;}
+    .tools{display:none;position:static;margin-left:auto;padding-left:8px;background:none;align-self:center;}
+    li.item:focus-within .tools{display:flex;opacity:1;}
     .add-item{opacity:1;padding:2px 0 4px;}
     .row-tools{opacity:1;margin:0 0 0 8px;}
     .dash{display:none;}
