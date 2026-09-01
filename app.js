@@ -237,13 +237,18 @@ if (typeof document !== 'undefined') (function () {
   }
   function mutate(op) {
     applyOp(state.doc, op);
-    var key = coalesceKey(op);
-    if (key) {
-      for (var i = state.pending.length - 1; i >= 0; i--) {
-        if (coalesceKey(state.pending[i]) === key) { state.pending[i] = op; key = null; break; }
+    // PUT 비행 중에는 코얼레싱 금지: 비행 중 스냅샷에 포함된 op를 교체하면
+    // 성공 시 splice로 함께 제거되어 새 값이 전송되지 않은 채 유실된다.
+    var replaced = false;
+    if (!saving) {
+      var key = coalesceKey(op);
+      if (key) {
+        for (var i = state.pending.length - 1; i >= 0; i--) {
+          if (coalesceKey(state.pending[i]) === key) { state.pending[i] = op; replaced = true; break; }
+        }
       }
     }
-    if (key !== null || !coalesceKey(op)) state.pending.push(op);
+    if (!replaced) state.pending.push(op);
     updateCache();
     saveSoon();
   }
