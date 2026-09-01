@@ -17,6 +17,20 @@
     --line:#EDE3DA;
     --tan:#C3A484;
     --tan-soft:#F1E7DA;
+    --accent-hover:#FBF1ED;
+    --focus-bg:#FDF3EF;
+    --day-bg:#FEFCFA;
+    --cb-border:#E3CEC9;
+  }
+  /* 시트 2: 라벤더 테마 */
+  body[data-sheet="2"]{
+    --rose:#CAC5ED;
+    --rose-deep:#8F86D2;
+    --rose-text:#877FC7;
+    --accent-hover:#F1EFFA;
+    --focus-bg:#EFEDFB;
+    --day-bg:#FCFCFE;
+    --cb-border:#D6D2EE;
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
@@ -28,6 +42,15 @@
     padding:36px 16px 60px;
   }
   .sheet{max-width:1060px;margin:0 auto;}
+
+  /* ── sheet tabs ── */
+  .sheets{display:flex;gap:6px;justify-content:center;margin-bottom:14px;}
+  .sheets a{
+    font-size:12.5px;font-weight:700;color:#B9ACA6;text-decoration:none;
+    border:1px solid transparent;border-radius:999px;padding:6px 18px;transition:.15s;
+  }
+  .sheets a:hover{color:var(--rose-deep);background:var(--accent-hover);}
+  .sheets a.active{background:var(--rose);color:#fff;}
 
   /* ── toolbar ── */
   .toolbar{
@@ -69,12 +92,12 @@
   .row{border-bottom:1px solid var(--line);}
   .row:last-child{border-bottom:none;}
   .day{
-    text-align:center;background:#FEFCFA;border-right:1px solid var(--line);
+    text-align:center;background:var(--day-bg);border-right:1px solid var(--line);
     padding:20px 10px 16px;
   }
   .day-label{font-size:20px;font-weight:800;color:var(--rose-text);letter-spacing:-.01em;outline:none;border-radius:3px;}
   .day-sub{font-size:11.5px;color:#A79C97;margin-top:5px;outline:none;border-radius:3px;}
-  .day-label:focus,.day-sub:focus{background:#FDF3EF;box-shadow:0 0 0 2px #FDF3EF;}
+  .day-label:focus,.day-sub:focus{background:var(--focus-bg);box-shadow:0 0 0 2px var(--focus-bg);}
   .day-progress{font-size:11px;font-weight:700;color:var(--rose-text);margin-top:7px;}
   .cell{padding:16px 18px;min-width:0;}
   .cellhead{display:none;}
@@ -88,7 +111,7 @@
   li.item input[type=checkbox]{
     appearance:none;-webkit-appearance:none;
     width:16px;height:16px;margin:2px 0 0;flex:none;
-    border:1.5px solid #E3CEC9;border-radius:4px;background:#fff;cursor:pointer;
+    border:1.5px solid var(--cb-border);border-radius:4px;background:#fff;cursor:pointer;
   }
   li.item input[type=checkbox]:hover{border-color:var(--rose-deep);}
   li.item input[type=checkbox]:checked{background:var(--rose);border-color:var(--rose);}
@@ -102,7 +125,7 @@
     flex:1;min-width:0;outline:none;border-radius:3px;
   }
   li.item.key .txt{font-weight:700;color:#453E3B;}
-  .txt:focus{background:#FDF3EF;box-shadow:0 0 0 2px #FDF3EF;}
+  .txt:focus{background:var(--focus-bg);box-shadow:0 0 0 2px var(--focus-bg);}
   li.item.done .txt{color:#BDB3AE;text-decoration:line-through;text-decoration-color:#E3D6D1;}
 
   .badge{
@@ -121,7 +144,7 @@
     vertical-align:1px;
   }
   .tip .tip-txt{outline:none;border-radius:3px;}
-  .tip .tip-txt:focus{background:#FBF2E8;box-shadow:0 0 0 2px #FBF2E8;}
+  .tip .tip-txt:focus{background:var(--focus-bg);box-shadow:0 0 0 2px var(--focus-bg);}
   .dash{color:#CFC5C0;font-size:14px;}
 
   /* ── row controls (screen only) ── */
@@ -134,7 +157,7 @@
     font-family:inherit;border:none;background:none;cursor:pointer;
     font-size:11px;color:#C6B8B2;padding:2px 4px;border-radius:3px;line-height:1;
   }
-  .tools button:hover{color:var(--rose-deep);background:#FBF1ED;}
+  .tools button:hover{color:var(--rose-deep);background:var(--accent-hover);}
   .add-item{
     font-family:inherit;font-size:11.5px;color:#CDC0BA;background:none;border:none;
     padding:5px 0 0;cursor:pointer;opacity:0;transition:.12s;
@@ -149,7 +172,7 @@
     font-family:inherit;font-size:11px;color:#C6B8B2;background:none;border:none;
     cursor:pointer;padding:2px 5px;border-radius:3px;
   }
-  .row-tools button:hover{color:var(--rose-deep);background:#FBF1ED;}
+  .row-tools button:hover{color:var(--rose-deep);background:var(--accent-hover);}
 
   /* ── 마일스톤 메모 ── */
   .memo-btn{
@@ -157,7 +180,7 @@
     background:none;border:1px solid var(--line);border-radius:999px;
     padding:3px 10px;margin-top:9px;cursor:pointer;transition:.12s;
   }
-  .memo-btn:hover{color:var(--rose-deep);background:#FBF1ED;border-color:var(--rose);}
+  .memo-btn:hover{color:var(--rose-deep);background:var(--accent-hover);border-color:var(--rose);}
   .memo-btn.has{color:var(--rose-deep);border-color:var(--rose);}
   .memo{
     display:none;grid-column:1/-1;order:99;
@@ -173,7 +196,7 @@
     flex:1;min-width:0;min-height:1.2em;font-size:12.5px;line-height:1.6;color:#8A7A6D;
     white-space:pre-wrap;outline:none;border-radius:3px;
   }
-  .memo-txt:focus{background:#FBF2E8;box-shadow:0 0 0 2px #FBF2E8;}
+  .memo-txt:focus{background:var(--focus-bg);box-shadow:0 0 0 2px var(--focus-bg);}
   .memo-txt:empty::before{content:'메모를 입력하세요 (예: 예산 금액, 업체 연락처)';color:#CDBFAE;}
 
   .foot{text-align:center;font-size:12.5px;color:#A79C97;margin-top:26px;}
@@ -223,7 +246,7 @@
   /* ── 인쇄 ── */
   @media print{
     body{background:#fff;padding:0;}
-    .toolbar,.status,.tools,.add-item,.row-tools,.memo-btn{display:none !important;}
+    .toolbar,.status,.tools,.add-item,.row-tools,.memo-btn,.sheets{display:none !important;}
     .board{border:1px solid var(--line);border-radius:0;}
     .bhead{display:grid;}
     .row{display:grid;grid-template-columns:132px 1fr 1fr 1fr;break-inside:avoid;
@@ -237,6 +260,11 @@
 </head>
 <body>
 <div class="sheet">
+
+  <nav class="sheets">
+    <a href="?sheet=1" data-sheet="1">시트 1</a>
+    <a href="?sheet=2" data-sheet="2">시트 2</a>
+  </nav>
 
   <div class="toolbar">
     <button type="button" data-act="reset">체크 초기화</button>

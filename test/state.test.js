@@ -9,13 +9,13 @@ function fakeRes() {
   res.json = (o) => { res.body = o; return res; };
   return res;
 }
-// 인메모리 Redis 흉내: POST body ["GET",key] / ["SET",key,val]
+// 인메모리 Redis 흉내: POST body ["GET",key] / ["SET",key,val] — 키별 저장
 function stubRedis(store) {
   global.fetch = async (url, opts) => {
     const cmd = JSON.parse(opts.body);
     let result = null;
-    if (cmd[0] === 'GET') result = store.val ?? null;
-    if (cmd[0] === 'SET') { store.val = cmd[2]; result = 'OK'; }
+    if (cmd[0] === 'GET') result = store[cmd[1]] ?? (cmd[1] === 'wedding-timeline:state' ? store.val : null) ?? null;
+    if (cmd[0] === 'SET') { store[cmd[1]] = cmd[2]; if (cmd[1] === 'wedding-timeline:state') store.val = cmd[2]; result = 'OK'; }
     return { ok: true, json: async () => ({ result }) };
   };
 }
@@ -71,6 +71,30 @@ test('PUT: 형식 오류 400 / 크기 초과 413 / 그 외 메서드 405', async
   res = fakeRes();
   await handler({ method: 'POST' }, res);
   assert.equal(res.statusCode, 405);
+});
+
+test('sheet 파라미터: 시트별 별도 키, 기본/1은 기존 키 유지', async () => {
+  env(true); const store = {}; stubRedis(store);
+  let res = fakeRes();
+  await handler({ method: 'PUT', query: { sheet: '2' }, body: { baseRev: 0, doc: { rows: ['s2'] } } }, res);
+  assert.equal(res.statusCode, 200);
+  assert.ok(store['wedding-timeline:state:2'], '시트2는 접미사 키에 저장');
+  res = fakeRes();
+  await handler({ method: 'PUT', query: { sheet: '1' }, body: { baseRev: 0, doc: { rows: ['s1'] } } }, res);
+  assert.ok(store['wedding-timeline:state'], '시트1은 기존 키에 저장');
+  res = fakeRes();
+  await handler({ method: 'GET', query: { sheet: '2' } }, res);
+  assert.deepEqual(res.body.doc, { rows: ['s2'] });
+  res = fakeRes();
+  await handler({ method: 'GET' }, res);
+  assert.deepEqual(res.body.doc, { rows: ['s1'] });
+});
+
+test('sheet 형식 오류는 400', async () => {
+  env(true); stubRedis({});
+  const res = fakeRes();
+  await handler({ method: 'GET', query: { sheet: '../etc' } }, res);
+  assert.equal(res.statusCode, 400);
 });
 
 test('Redis 오류 시 502', async () => {

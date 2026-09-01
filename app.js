@@ -95,7 +95,12 @@ if (typeof module !== 'undefined') module.exports = { applyOp, reapply, rowProgr
 /* ── 브라우저: 렌더링 + 동기화 ─────────────────────────── */
 if (typeof document !== 'undefined') (function () {
 
-  var CACHE_KEY = 'wedding-timeline-v2';
+  var SHEET = (function () {
+    var s = new URLSearchParams(location.search).get('sheet') || '1';
+    return /^[A-Za-z0-9-]{1,20}$/.test(s) ? s : '1';
+  })();
+  document.body.dataset.sheet = SHEET;   // 시트별 테마(CSS 변수) 적용
+  var CACHE_KEY = 'wedding-timeline-v2' + (SHEET === '1' ? '' : ':' + SHEET);
   var OLD_KEY = 'wedding-timeline-v1';
   var MSG_OFFLINE = '오프라인 — 연결되면 자동 저장됩니다.';
   var MSG_NOKV = '서버 저장소 미연결 — Vercel에서 Upstash Redis를 연결하세요. 임시로 이 브라우저에만 저장됩니다.';
@@ -255,7 +260,7 @@ if (typeof document !== 'undefined') (function () {
 
   /* ── 서버 통신 ── */
   function api(method, body) {
-    return fetch('/api/state', {
+    return fetch('/api/state?sheet=' + SHEET, {
       method: method,
       headers: body ? { 'Content-Type': 'application/json' } : undefined,
       body: body ? JSON.stringify(body) : undefined,
@@ -320,6 +325,9 @@ if (typeof document !== 'undefined') (function () {
 
   function boot() {
     try { localStorage.removeItem(OLD_KEY); } catch (e) {}
+    document.querySelectorAll('.sheets a').forEach(function (a) {
+      a.classList.toggle('active', a.dataset.sheet === SHEET);
+    });
     var cache = readCache();
     if (cache && cache.doc) {
       state.doc = cache.doc; state.rev = cache.rev || 0; state.pending = cache.pending || [];

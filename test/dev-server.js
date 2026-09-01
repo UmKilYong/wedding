@@ -11,8 +11,8 @@ const store = {};
 global.fetch = async (url, opts) => {
   const cmd = JSON.parse(opts.body);
   let result = null;
-  if (cmd[0] === 'GET') result = store.val ?? null;
-  if (cmd[0] === 'SET') { store.val = cmd[2]; result = 'OK'; }
+  if (cmd[0] === 'GET') result = store[cmd[1]] ?? null;
+  if (cmd[0] === 'SET') { store[cmd[1]] = cmd[2]; result = 'OK'; }
   return { ok: true, json: async () => ({ result }) };
 };
 
@@ -26,9 +26,11 @@ http.createServer(async (req, res) => {
       status(c) { res.statusCode = c; return this; },
       json(o) { res.setHeader('Content-Type', 'application/json'); res.end(JSON.stringify(o)); return this; }
     };
-    return handler({ method: req.method, body: raw ? JSON.parse(raw) : undefined }, vres);
+    const query = Object.fromEntries(new URL(req.url, 'http://x').searchParams);
+    return handler({ method: req.method, query, body: raw ? JSON.parse(raw) : undefined }, vres);
   }
-  const p = path.join(__dirname, '..', req.url === '/' ? 'index.html' : req.url.split('?')[0]);
+  const pathname = new URL(req.url, 'http://x').pathname;
+  const p = path.join(__dirname, '..', pathname === '/' ? 'index.html' : pathname);
   fs.readFile(p, (e, buf) => {
     if (e) { res.statusCode = 404; return res.end('not found'); }
     res.setHeader('Content-Type', MIME[path.extname(p)] || 'application/octet-stream');
