@@ -121,7 +121,16 @@ if (typeof document !== 'undefined') (function () {
   function newId(prefix) { return prefix + Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
   function stamp() { var d = new Date(); return ('0' + d.getHours()).slice(-2) + ':' + ('0' + d.getMinutes()).slice(-2); }
   function setStatus(msg, warn) { statusEl.textContent = msg; statusEl.className = warn ? 'status warn' : 'status'; }
-  function seedDoc() { return JSON.parse(document.getElementById('seed').textContent); }
+  function seedDoc() {
+    var d = JSON.parse(document.getElementById('seed').textContent);
+    // 시트별 D-라벨 오버라이드 (시트 2는 365일 기준 원본 라벨)
+    var ov = (d.labelOverrides || {})[SHEET];
+    delete d.labelOverrides;
+    if (ov) d.rows.forEach(function (r) {
+      if (ov[r.id]) { r.label = ov[r.id][0]; r.sub = ov[r.id][1]; }
+    });
+    return d;
+  }
 
   function updateCache() {
     if (mode === 'local') state.pending = [];
