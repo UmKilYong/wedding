@@ -43,15 +43,6 @@
   }
   .sheet{max-width:1060px;margin:0 auto;}
 
-  /* ── sheet tabs ── */
-  .sheets{display:flex;gap:6px;justify-content:center;margin-bottom:14px;}
-  .sheets a{
-    font-size:12.5px;font-weight:700;color:#B9ACA6;text-decoration:none;
-    border:1px solid transparent;border-radius:999px;padding:6px 18px;transition:.15s;
-  }
-  .sheets a:hover{color:var(--rose-deep);background:var(--accent-hover);}
-  .sheets a.active{background:var(--rose);color:#fff;}
-
   /* ── toolbar ── */
   .toolbar{
     display:flex;flex-wrap:wrap;gap:8px;justify-content:center;
@@ -246,7 +237,7 @@
   /* ── 인쇄 ── */
   @media print{
     body{background:#fff;padding:0;}
-    .toolbar,.status,.tools,.add-item,.row-tools,.memo-btn,.sheets{display:none !important;}
+    .toolbar,.status,.tools,.add-item,.row-tools,.memo-btn{display:none !important;}
     .board{border:1px solid var(--line);border-radius:0;}
     .bhead{display:grid;}
     .row{display:grid;grid-template-columns:132px 1fr 1fr 1fr;break-inside:avoid;
@@ -260,11 +251,6 @@
 </head>
 <body>
 <div class="sheet">
-
-  <nav class="sheets">
-    <a href="?sheet=1" data-sheet="1">시트 1</a>
-    <a href="?sheet=2" data-sheet="2">시트 2</a>
-  </nav>
 
   <div class="toolbar">
     <button type="button" data-act="reset">체크 초기화</button>

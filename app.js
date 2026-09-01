@@ -334,9 +334,6 @@ if (typeof document !== 'undefined') (function () {
 
   function boot() {
     try { localStorage.removeItem(OLD_KEY); } catch (e) {}
-    document.querySelectorAll('.sheets a').forEach(function (a) {
-      a.classList.toggle('active', a.dataset.sheet === SHEET);
-    });
     var cache = readCache();
     if (cache && cache.doc) {
       state.doc = cache.doc; state.rev = cache.rev || 0; state.pending = cache.pending || [];
