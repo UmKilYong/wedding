@@ -68,6 +68,15 @@ test('delItem/addRow/delRow/reset/replace', () => {
   assert.deepEqual(d2.rows, seed.rows);
 });
 
+test('memo: 행 메모 설정, 없는 행은 no-op, addRow는 빈 메모 포함', () => {
+  const d = doc();
+  applyOp(d, { t: 'memo', id: 'r1', v: '예산 5,000만원' });
+  assert.equal(d.rows[0].memo, '예산 5,000만원');
+  assert.doesNotThrow(() => applyOp(d, { t: 'memo', id: 'ghost', v: 'x' }));
+  applyOp(d, { t: 'addRow', id: 'r2' });
+  assert.equal(d.rows[1].memo, '');
+});
+
 test('reapply는 ops를 순서대로 적용', () => {
   const d = doc();
   reapply(d, [{ t: 'check', id: 'i1', v: true }, { t: 'text', id: 'i1', v: 'x' }]);

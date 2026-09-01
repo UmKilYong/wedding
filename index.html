@@ -151,6 +151,31 @@
   }
   .row-tools button:hover{color:var(--rose-deep);background:#FBF1ED;}
 
+  /* ── 마일스톤 메모 ── */
+  .memo-btn{
+    font-family:inherit;font-size:11px;font-weight:600;color:#C6B8B2;
+    background:none;border:1px solid var(--line);border-radius:999px;
+    padding:3px 10px;margin-top:9px;cursor:pointer;transition:.12s;
+  }
+  .memo-btn:hover{color:var(--rose-deep);background:#FBF1ED;border-color:var(--rose);}
+  .memo-btn.has{color:var(--rose-deep);border-color:var(--rose);}
+  .memo{
+    display:none;grid-column:1/-1;order:99;
+    background:#FBF6EE;border-top:1px solid var(--line);
+    padding:10px 18px;gap:9px;align-items:flex-start;
+  }
+  .row.memo-open .memo{display:flex;}
+  .memo .memo-label{
+    flex:none;font-size:10.5px;font-weight:800;color:#B08D63;
+    background:var(--tan-soft);border-radius:4px;padding:2px 7px;margin-top:1px;
+  }
+  .memo-txt{
+    flex:1;min-width:0;min-height:1.2em;font-size:12.5px;line-height:1.6;color:#8A7A6D;
+    white-space:pre-wrap;outline:none;border-radius:3px;
+  }
+  .memo-txt:focus{background:#FBF2E8;box-shadow:0 0 0 2px #FBF2E8;}
+  .memo-txt:empty::before{content:'메모를 입력하세요 (예: 예산 금액, 업체 연락처)';color:#CDBFAE;}
+
   .foot{text-align:center;font-size:12.5px;color:#A79C97;margin-top:26px;}
 
   /* ── 모바일: 날짜별 카드 스택 ── */
@@ -187,6 +212,9 @@
     .tip{font-size:13px;}
     .tools{display:none;position:static;margin-left:auto;padding-left:8px;background:none;align-self:center;}
     li.item:focus-within .tools{display:flex;opacity:1;}
+    .memo-btn{margin:0 0 0 6px;align-self:center;}
+    .memo{padding:10px 16px;border-radius:0 0 12px 12px;font-size:13px;}
+    .memo-txt{font-size:13.5px;}
     .add-item{opacity:1;padding:2px 0 4px;}
     .row-tools{opacity:1;margin:0 0 0 8px;}
     .dash{display:none;}
@@ -195,7 +223,7 @@
   /* ── 인쇄 ── */
   @media print{
     body{background:#fff;padding:0;}
-    .toolbar,.status,.tools,.add-item,.row-tools{display:none !important;}
+    .toolbar,.status,.tools,.add-item,.row-tools,.memo-btn{display:none !important;}
     .board{border:1px solid var(--line);border-radius:0;}
     .bhead{display:grid;}
     .row{display:grid;grid-template-columns:132px 1fr 1fr 1fr;break-inside:avoid;

@@ -42,6 +42,11 @@ function applyOp(doc, op) {
       if (r && (op.field === 'label' || op.field === 'sub')) r[op.field] = op.v;
       break;
     }
+    case 'memo': {
+      const r = findRow(doc, op.id);
+      if (r) r.memo = op.v;
+      break;
+    }
     case 'meta': {
       if (['title', 'sub', 'foot'].includes(op.field)) doc.meta[op.field] = op.v;
       break;
@@ -62,7 +67,7 @@ function applyOp(doc, op) {
       break;
     }
     case 'addRow': {
-      if (!findRow(doc, op.id)) doc.rows.push({ id: op.id, label: 'D-', sub: '', cells: emptyCells() });
+      if (!findRow(doc, op.id)) doc.rows.push({ id: op.id, label: 'D-', sub: '', memo: '', cells: emptyCells() });
       break;
     }
     case 'delRow': {
@@ -103,6 +108,8 @@ if (typeof document !== 'undefined') (function () {
   var saveTimer = null;
 
   var board = document.getElementById('board');
+  var openMemos = new Set();      // 메모 표시 여부(기기 로컬). 첫 렌더 때 내용 있는 행은 자동 열림
+  var openMemosInit = false;
   var statusEl = document.getElementById('status');
   var metaEls = { title: document.getElementById('title'), sub: document.getElementById('sub'), foot: document.getElementById('foot') };
 
@@ -172,15 +179,24 @@ if (typeof document !== 'undefined') (function () {
   function buildRow(row, doc) {
     var sec = el('section', 'row');
     sec.dataset.id = row.id;
+    var memoText = row.memo || '';
     var day = el('div', 'day');
     var lb = el('div', 'day-label', row.label); lb.contentEditable = 'true'; lb.dataset.field = 'label';
     var sb = el('div', 'day-sub', row.sub); sb.contentEditable = 'true'; sb.dataset.field = 'sub';
     var pg = el('div', 'day-progress');
+    var mb = btn('memo-btn' + (memoText ? ' has' : ''), 'togglememo', memoText ? '메모 ●' : '메모');
     var rt = el('div', 'row-tools');
     rt.appendChild(btn('', 'delrow', '행 삭제'));
-    day.appendChild(lb); day.appendChild(sb); day.appendChild(pg); day.appendChild(rt);
+    day.appendChild(lb); day.appendChild(sb); day.appendChild(pg); day.appendChild(mb); day.appendChild(rt);
     sec.appendChild(day);
     for (var c = 0; c < 3; c++) sec.appendChild(buildCell(row, c, doc));
+    var memo = el('div', 'memo');
+    memo.appendChild(el('span', 'memo-label', 'MEMO'));
+    var mt = el('div', 'memo-txt', memoText);
+    mt.contentEditable = 'true';
+    memo.appendChild(mt);
+    sec.appendChild(memo);
+    if (openMemos.has(row.id)) sec.classList.add('memo-open');
     setProgress(pg, row);
     return sec;
   }
@@ -192,6 +208,10 @@ if (typeof document !== 'undefined') (function () {
 
   function renderAll() {
     var doc = state.doc;
+    if (!openMemosInit) {
+      openMemosInit = true;
+      doc.rows.forEach(function (r) { if (r.memo) openMemos.add(r.id); });
+    }
     Object.keys(metaEls).forEach(function (k) {
       if (metaEls[k] !== editingEl) metaEls[k].textContent = doc.meta[k];
     });
@@ -210,6 +230,7 @@ if (typeof document !== 'undefined') (function () {
   function coalesceKey(op) {
     if (op.t === 'text' || op.t === 'check' || op.t === 'key') return op.t + ':' + op.id;
     if (op.t === 'rowLabel') return 'rowLabel:' + op.id + ':' + op.field;
+    if (op.t === 'memo') return 'memo:' + op.id;
     if (op.t === 'meta') return 'meta:' + op.field;
     if (op.t === 'tip') return 'tip:' + op.rowId + ':' + op.col;
     return null;
@@ -390,6 +411,16 @@ if (typeof document !== 'undefined') (function () {
         mutate({ t: 'replace', doc: seedDoc() }); renderAll();
       }
     }
+    if (act === 'togglememo') {
+      var sec = b.closest('.row');
+      var rid2 = sec.dataset.id;
+      if (openMemos.has(rid2)) { openMemos.delete(rid2); sec.classList.remove('memo-open'); }
+      else {
+        openMemos.add(rid2); sec.classList.add('memo-open');
+        var mt = sec.querySelector('.memo-txt');
+        if (!mt.textContent) mt.focus();
+      }
+    }
     if (act === 'print') window.print();
     if (act === 'save') downloadSnapshot();
   }
@@ -410,6 +441,12 @@ if (typeof document !== 'undefined') (function () {
     }
     else if (t.classList.contains('day-label') || t.classList.contains('day-sub'))
       mutate({ t: 'rowLabel', id: rowId(t), field: t.dataset.field, v: v });
+    else if (t.classList.contains('memo-txt')) {
+      mutate({ t: 'memo', id: rowId(t), v: v });
+      var mb = t.closest('.row').querySelector('.memo-btn');
+      mb.textContent = v ? '메모 ●' : '메모';
+      mb.classList.toggle('has', !!v);
+    }
     else if (t.id === 'title' || t.id === 'sub' || t.id === 'foot')
       mutate({ t: 'meta', field: t.id, v: v });
   });
@@ -423,6 +460,8 @@ if (typeof document !== 'undefined') (function () {
       mutate({ t: 'addItem', rowId: rowId(e.target), col: Number(cellEl.dataset.col), id: id, afterId: itemId(e.target) });
       renderAll();
       focusItem(id);
+    } else if (e.target.classList.contains('memo-txt')) {
+      document.execCommand('insertText', false, '\n');
     } else {
       e.target.blur();
     }
